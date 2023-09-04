@@ -1,0 +1,62 @@
+<!-- Basic UI for running the example in the browser -->
+<html>
+  <head>
+    <title>Multiply integers under MPC using an external crypto provider</title>
+    <style>
+      .error {
+        color: #FF0000;
+      }
+    </style>
+    <!-- JIFF and dependencies. -->
+    <script src="/bignumber.js/bignumber.min.js"></script>
+    <script src="/dist/jiff-client.js"></script>
+    <script src="/lib/ext/jiff-client-bignumber.js"></script>
+    
+    <!-- The client code -->
+    <script type="text/javascript">
+    function submit() {
+      var output_div = document.getElementById("output");
+
+      // Parse input.
+      var input = document.getElementById("number").value;
+      input = parseInt(input);
+      if (isNaN(input) || input < 0 || input > 100) {
+        output_div.innerHTML += "<p class='error'>Input must be an integer between 0 and 100!</p>";
+        return;
+      }
+
+      // Connect to server.
+      var jiffClient = new JIFFClient("http://localhost:3000/", "example", {
+        crypto_provider: 'http://localhost:4321',
+        onConnect: function () { console.log("Connected to JIFF server!"); },
+        onError: function (_, error) {
+          output_div.innerHTML += "<p class='error'>JIFF Error " + error + "</p>";
+        }
+      });
+      jiffClient.apply_extension(jiff_bignumber);
+
+      // Begin computation.
+      jiffClient.wait_for(['s1'], function () {
+        console.log('Computation initialized!');
+        
+        // Share the server's input with the client and receive the client input share.
+        var shares = jiffClient.share(input, 2, [1, 's1'], [1, 's1']);
+
+        // Add the two shares.
+        var result = shares[1].smult(shares['s1']);
+        
+        // Reveal result.
+        jiffClient.open(result, [1]).then(function (result) {
+          output_div.innerHTML += "<h3>Result: " + result + "</h3>";
+          jiffClient.disconnect(true, true);
+        });
+      });
+    }
+    </script>
+  </head>
+  <body>
+    <h1>Multiply integers under MPC using an external crypto provider</h1>
+    <label for="number">Input Number (between 0 and 100)</label> <input id="number" pattern="[0-9]+"> &nbsp; <button onclick="submit();" id="button">Sum</button><br/>
+    <div id="output"></div>
+  </body>
+</html>

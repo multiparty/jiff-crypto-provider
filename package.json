@@ -1,0 +1,29 @@
+{
+  "name": "jiff-crypto-provider",
+  "version": "1.0.0",
+  "description": "Standalone crypto provider party for JIFF computations",
+  "main": "src/restarter.js",
+  "directories": {
+    "test": "test"
+  },
+  "dependencies": {
+    "bignumber.js": "^5.0.0",
+    "body-parser": "^1.17.2",
+    "compression": "^1.7.1",
+    "cors": "^2.8.5",
+    "express": "^4.15.3",
+    "greenlock-express": "^2.0.11",
+    "increase-memory-limit": "^1.0.3",
+    "jiff": "file:jiff"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/KinanBab/jiff-crypto-provider.git"
+  },
+  "author": "Kinan Dak Albab",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/KinanBab/jiff-crypto-provider/issues"
+  },
+  "homepage": "https://github.com/KinanBab/jiff-crypto-provider"
+}
